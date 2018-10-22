@@ -6,6 +6,7 @@ namespace WeirdProject
 {
     public class Block
     {
+        public bool isVisible { get; set; }
         private int tw, th;
         private Game1 g;
         private Texture2D filledBlock;
@@ -62,7 +63,7 @@ namespace WeirdProject
             {
                 for(int x = 0; x < MapWidth; x++)
                 {
-                    block[x + y * MapWidth] = new Block(g, Green(), TileWidth, TileHeight);
+                    block[x + y * MapWidth] = null;
                 }
             }
 
@@ -101,13 +102,18 @@ namespace WeirdProject
         private void DrawBlock()
         {
             MouseState state = Mouse.GetState();
-            /*
-            if(state.LeftButton == ButtonState.Pressed &&
-                state.Position.X < )
-            {
 
-            }
-            */
+            for(int y = 0; y < MapHeight; y++)
+            {
+                for(int x = 0; x < MapWidth; x++)
+                {
+                    if (state.LeftButton == ButtonState.Pressed &&
+                state.Position.X < )
+                    {
+
+                    }
+                }
+            }  
         }
 
         private Color Black()
