@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace WeirdProject
+namespace SuperSuperWeirdProject
 {
     /// <summary>
     /// This is the main type for your game.
@@ -11,17 +11,19 @@ namespace WeirdProject
     {
         private const int WIDTH = 200;
         private const int HEIGHT = 200;
-
-        private const int TILEWIDTH = 20;
-        private const int TILEHEIGHT = 20;
-
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        MapClass map;
+        theHappening th;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            
+
+            graphics.PreferredBackBufferWidth = WIDTH;
+            graphics.PreferredBackBufferHeight = HEIGHT;
+            graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -33,10 +35,7 @@ namespace WeirdProject
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            map = new MapClass(this, TILEWIDTH, TILEHEIGHT);
-            graphics.PreferredBackBufferWidth = WIDTH;
-            graphics.PreferredBackBufferHeight = HEIGHT;
-            graphics.ApplyChanges();
+            th = new theHappening(this, WIDTH, HEIGHT);
             IsMouseVisible = true;
             base.Initialize();
         }
@@ -49,7 +48,7 @@ namespace WeirdProject
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            map.Load();
+            th.Load();
             // TODO: use this.Content to load your game content here
         }
 
@@ -59,8 +58,8 @@ namespace WeirdProject
         /// </summary>
         protected override void UnloadContent()
         {
+            th.Unload();
             // TODO: Unload any non ContentManager content here
-            map.Unload();
         }
 
         /// <summary>
@@ -73,8 +72,9 @@ namespace WeirdProject
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            th.Update(gameTime);
             // TODO: Add your update logic here
-            map.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -86,12 +86,10 @@ namespace WeirdProject
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            th.Draw(spriteBatch);
             // TODO: Add your drawing code here
-            map.Draw(spriteBatch);
+
             base.Draw(gameTime);
         }
-
-        public int getWidth() { return WIDTH; }
-        public int getHeight() { return HEIGHT; }
     }
 }
