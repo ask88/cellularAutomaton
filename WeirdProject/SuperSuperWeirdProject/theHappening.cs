@@ -68,6 +68,7 @@ namespace SuperSuperWeirdProject
 
         private List<theCube> cubeList;
         private mapData[] mapArray;
+        private bool[] isOccupied;
 
         public theHappening(Game1 g, int screenWidth, int screenHeight)
         {
@@ -83,6 +84,7 @@ namespace SuperSuperWeirdProject
 
             cubeList = new List<theCube>();
             mapArray = new mapData[mapWidth * mapHeight];
+            isOccupied = new bool[mapWidth * mapHeight];
 
             for(int y = 0; y < mapHeight; y++)
             {
@@ -91,6 +93,7 @@ namespace SuperSuperWeirdProject
                     mapArray[x + y * mapWidth] = new mapData();
                     mapArray[x + y * mapWidth].x = (tileWidth * x);
                     mapArray[x + y * mapWidth].y = (tileHeight * y);
+                    isOccupied[x + y * mapWidth] = false;
                 }
             }
         }
@@ -226,6 +229,7 @@ namespace SuperSuperWeirdProject
                             selectedColor = Blue();
                         }
                         cubeList.Add(new theCube(g, selectedColor, tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y));
+                        isOccupied[x + y * mapWidth] = true;
                     }
                     if (state.Position.X > mapArray[x + y * mapWidth].x &&
                         state.Position.X < mapArray[x + y * mapWidth].x + tileWidth &&
@@ -233,31 +237,26 @@ namespace SuperSuperWeirdProject
                         state.Position.Y < mapArray[x + y * mapWidth].y + tileHeight &&
                         state.RightButton == ButtonState.Pressed)
                     {
-                        //cubeArray[x + y * mapWidth].isDisplay = false;
+                        //cubeList.Remove();
                     }
                 }
             }
         }
         private void MoveCubes()
         {
-            int redMulti = 0;
-            int blueMulti = 0;
-            int greenMulti = 0;
-            int blackMulti = 0;
-
             for(int i = 0; i < cubeList.Count; i++)
             {
                 int direction = rand.Next(0, 101);
 
                 switch (direction)
                 {
-                    case int n when (n < (25 - blackMulti) && cubeList[i].getCubeColor().Equals(Black())):
+                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Black())):
                         cubeList[i].isMovingUp = true;
                         cubeList[i].isMovingDown = false;
                         cubeList[i].isMovingLeft = false;
                         cubeList[i].isMovingRight = false;
                         break;
-                    case int n when (n > (24 - blackMulti) && n < 50) && cubeList[i].getCubeColor().Equals(Black()):
+                    case int n when (n > 24 && n < 50) && cubeList[i].getCubeColor().Equals(Black()):
                         cubeList[i].isMovingUp = false;
                         cubeList[i].isMovingDown = true;
                         cubeList[i].isMovingLeft = false;
@@ -276,13 +275,13 @@ namespace SuperSuperWeirdProject
                         cubeList[i].isMovingRight = true;
                         break;
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    case int n when (n < (25 + redMulti) && cubeList[i].getCubeColor().Equals(Red())):
+                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Red())):
                         cubeList[i].isMovingUp = true;
                         cubeList[i].isMovingDown = false;
                         cubeList[i].isMovingLeft = false;
                         cubeList[i].isMovingRight = false;
                         break;
-                    case int n when (n > (24 + redMulti) && n < 50) && cubeList[i].getCubeColor().Equals(Red()):
+                    case int n when (n > 24&& n < 50) && cubeList[i].getCubeColor().Equals(Red()):
                         cubeList[i].isMovingUp = false;
                         cubeList[i].isMovingDown = true;
                         cubeList[i].isMovingLeft = false;
@@ -313,13 +312,13 @@ namespace SuperSuperWeirdProject
                         cubeList[i].isMovingLeft = false;
                         cubeList[i].isMovingRight = false;
                         break;
-                    case int n when (n > 49 && n < (75 + greenMulti)) && cubeList[i].getCubeColor().Equals(Green()):
+                    case int n when (n > 49 && n < 75) && cubeList[i].getCubeColor().Equals(Green()):
                         cubeList[i].isMovingUp = false;
                         cubeList[i].isMovingDown = false;
                         cubeList[i].isMovingLeft = true;
                         cubeList[i].isMovingRight = false;
                         break;
-                    case int n when (n > (74 + greenMulti) && n < 101) && cubeList[i].getCubeColor().Equals(Green()):
+                    case int n when (n > 74 && n < 101) && cubeList[i].getCubeColor().Equals(Green()):
                         cubeList[i].isMovingUp = false;
                         cubeList[i].isMovingDown = false;
                         cubeList[i].isMovingLeft = false;
@@ -338,26 +337,26 @@ namespace SuperSuperWeirdProject
                         cubeList[i].isMovingLeft = false;
                         cubeList[i].isMovingRight = false;
                         break;
-                    case int n when (n > 49 && n < (75 - blueMulti)) && cubeList[i].getCubeColor().Equals(Blue()):
+                    case int n when (n > 49 && n < 75) && cubeList[i].getCubeColor().Equals(Blue()):
                         cubeList[i].isMovingUp = false;
                         cubeList[i].isMovingDown = false;
                         cubeList[i].isMovingLeft = true;
                         cubeList[i].isMovingRight = false;
                         break;
-                    case int n when (n > (74 - blueMulti) && n < 101) && cubeList[i].getCubeColor().Equals(Blue()):
+                    case int n when (n > 74 && n < 101) && cubeList[i].getCubeColor().Equals(Blue()):
                         cubeList[i].isMovingUp = false;
                         cubeList[i].isMovingDown = false;
                         cubeList[i].isMovingLeft = false;
                         cubeList[i].isMovingRight = true;
                         break;
 
-                    case int n when (n < (25 - blackMulti) && cubeList[i].getCubeColor().Equals(Purple())):
+                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Purple())):
                         cubeList[i].isMovingUp = true;
                         cubeList[i].isMovingDown = false;
                         cubeList[i].isMovingLeft = false;
                         cubeList[i].isMovingRight = false;
                         break;
-                    case int n when (n > (24 - blackMulti) && n < 50) && cubeList[i].getCubeColor().Equals(Purple()):
+                    case int n when (n > 24 && n < 50) && cubeList[i].getCubeColor().Equals(Purple()):
                         cubeList[i].isMovingUp = false;
                         cubeList[i].isMovingDown = true;
                         cubeList[i].isMovingLeft = false;
@@ -379,7 +378,9 @@ namespace SuperSuperWeirdProject
 
                 if (cubeList[i].isMovingUp && cubeList[i].getY() > 0)
                 {
+                    isOccupied[cubeList[i].getX() + cubeList[i].getY() * mapWidth] = false;
                     cubeList[i].setY(cubeList[i].getY() - tileHeight);
+                    isOccupied[cubeList[i].getX() + cubeList[i].getY() * mapWidth] = true;
                 }
                 else if (cubeList[i].isMovingDown && cubeList[i].getY() + tileHeight < screenHeight)
                 {
@@ -394,62 +395,6 @@ namespace SuperSuperWeirdProject
                     cubeList[i].setX(cubeList[i].getX() + tileWidth);
                 }
             }
-        }
-        private bool CollidingCubesUp()
-        {
-            for (int i = 0; i < cubeList.Count; i++)
-            {
-                for (int j = 0; j < cubeList.Count; j++)
-                {
-                    if ((cubeList[i].getY() - tileHeight).Equals(cubeList[j].getY()))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        private bool CollidingCubesDown()
-        {
-            for (int i = 0; i < cubeList.Count; i++)
-            {
-                for (int j = 0; j < cubeList.Count; j++)
-                {
-                    if ((cubeList[i].getY() + tileHeight).Equals(cubeList[j].getY()))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        private bool CollidingCubesLeft()
-        {
-            for (int i = 0; i < cubeList.Count; i++)
-            {
-                for (int j = 0; j < cubeList.Count; j++)
-                {
-                    if ((cubeList[i].getX() - tileWidth).Equals(cubeList[j].getX()))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        private bool CollidingCubesRight()
-        {
-            for (int i = 0; i < cubeList.Count; i++)
-            {
-                for (int j = 0; j < cubeList.Count; j++)
-                {
-                    if ((cubeList[i].getX() + tileWidth).Equals(cubeList[j].getX()))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
         private void BreedingCubes()
         {
