@@ -9,8 +9,8 @@ namespace SuperSuperWeirdProject
     /// </summary>
     public class Game1 : Game
     {
-        private const int WIDTH = 200;
-        private const int HEIGHT = 200;
+        private const int WIDTH = 700;
+        private const int HEIGHT = 700;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         theHappening th;
