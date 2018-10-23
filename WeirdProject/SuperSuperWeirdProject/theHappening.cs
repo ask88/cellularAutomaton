@@ -378,6 +378,8 @@ namespace SuperSuperWeirdProject
 
                 if (cubeList[i].isMovingUp && cubeList[i].getY() > 0)
                 {
+                    //cubeList[i].getX() and .getY() are the actual X and Y values
+                    //isOccupied size is based off of mapWidth, which is 70x70
                     isOccupied[cubeList[i].getX() + cubeList[i].getY() * mapWidth] = false;
                     cubeList[i].setY(cubeList[i].getY() - tileHeight);
                     isOccupied[cubeList[i].getX() + cubeList[i].getY() * mapWidth] = true;
