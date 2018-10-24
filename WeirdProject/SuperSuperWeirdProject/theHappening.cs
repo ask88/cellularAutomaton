@@ -24,6 +24,11 @@ namespace SuperSuperWeirdProject
         public bool isMovingLeft { get; set; }
         public bool isMovingRight { get; set; }
 
+        public theCube()
+        {
+
+        }
+
         public theCube(Game1 g, Color color, int width, int height, int x, int y)
         {
             this.g = g;
@@ -66,7 +71,7 @@ namespace SuperSuperWeirdProject
         private float lastTime = 0;
         private Random rand = new Random();
 
-        private List<theCube> cubeList;
+        private theCube[] cubeArray;
         private mapData[] mapArray;
         private bool[] isOccupied;
 
@@ -82,7 +87,7 @@ namespace SuperSuperWeirdProject
             mapWidth = screenWidth / tileWidth;
             mapHeight = screenHeight / tileHeight;
 
-            cubeList = new List<theCube>();
+            cubeArray = new theCube[mapWidth * mapHeight];
             mapArray = new mapData[mapWidth * mapHeight];
             isOccupied = new bool[mapWidth * mapHeight];
 
@@ -93,6 +98,7 @@ namespace SuperSuperWeirdProject
                     mapArray[x + y * mapWidth] = new mapData();
                     mapArray[x + y * mapWidth].x = (tileWidth * x);
                     mapArray[x + y * mapWidth].y = (tileHeight * y);
+                    cubeArray[x + y * mapWidth] = new theCube();
                     isOccupied[x + y * mapWidth] = false;
                 }
             }
@@ -115,19 +121,23 @@ namespace SuperSuperWeirdProject
             if(firstTime!=lastTime)
             {
                 MoveCubes();
-                BreedingCubes();
+                //BreedingCubes();
                 lastTime = firstTime;
-                if(cubeList.Count > 0)
-                    Console.WriteLine(cubeList[0].getX());
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            for(int i = 0; i < cubeList.Count; i++)
+            for(int y = 0; y < mapHeight; y++)
             {
-                spriteBatch.Draw(cubeList[i].getTexture(), new Vector2(cubeList[i].getX(), cubeList[i].getY()), Color.White);
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    if ((cubeArray[x + y * mapWidth].getTexture() != null))
+                    {
+                        spriteBatch.Draw(cubeArray[x + y * mapWidth].getTexture(), new Vector2(cubeArray[x + y * mapWidth].getX(), cubeArray[x + y * mapWidth].getY()), Color.White);
+                    }
+                }
             }
             spriteBatch.End();
         }
@@ -228,7 +238,7 @@ namespace SuperSuperWeirdProject
                         {
                             selectedColor = Blue();
                         }
-                        cubeList.Add(new theCube(g, selectedColor, tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y));
+                        cubeArray[x + y * mapWidth] = new theCube(g, selectedColor, tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y);
                         isOccupied[x + y * mapWidth] = true;
                     }
                     if (state.Position.X > mapArray[x + y * mapWidth].x &&
@@ -244,163 +254,172 @@ namespace SuperSuperWeirdProject
         }
         private void MoveCubes()
         {
-            for(int i = 0; i < cubeList.Count; i++)
+            for(int y = 0; y < mapHeight; y++)
             {
-                int direction = rand.Next(0, 101);
-
-                switch (direction)
+                for (int x = 0; x < mapWidth; x++)
                 {
-                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Black())):
-                        cubeList[i].isMovingUp = true;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 24 && n < 50) && cubeList[i].getCubeColor().Equals(Black()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = true;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 49 && n < 75) && cubeList[i].getCubeColor().Equals(Black()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = true;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 74 && n < 101) && cubeList[i].getCubeColor().Equals(Black()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = true;
-                        break;
+                    int direction = rand.Next(0, 101);
+
+                    switch (20/*direction*/)
+                    {
+                        case int n when (n < 25 && cubeArray[x+y*mapWidth].getCubeColor().Equals(Black())):
+                            cubeArray[x + y * mapWidth].isMovingUp = true;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 24 && n < 50) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Black()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = true;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 49 && n < 75) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Black()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = true;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 74 && n < 101) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Black()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = true;
+                            break;
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Red())):
-                        cubeList[i].isMovingUp = true;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 24&& n < 50) && cubeList[i].getCubeColor().Equals(Red()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = true;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 49 && n < 75) && cubeList[i].getCubeColor().Equals(Red()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = true;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 74 && n < 101) && cubeList[i].getCubeColor().Equals(Red()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = true;
-                        break;
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Green())):
-                        cubeList[i].isMovingUp = true;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 24 && n < 50) && cubeList[i].getCubeColor().Equals(Green()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = true;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 49 && n < 75) && cubeList[i].getCubeColor().Equals(Green()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = true;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 74 && n < 101) && cubeList[i].getCubeColor().Equals(Green()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = true;
-                        break;
+                        case int n when (n < 25 && cubeArray[x + y * mapWidth].getCubeColor().Equals(Red())):
+                            cubeArray[x + y * mapWidth].isMovingUp = true;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 24 && n < 50) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Red()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = true;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 49 && n < 75) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Red()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = true;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 74 && n < 101) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Red()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = true;
+                            break;
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        case int n when (n < 25 && cubeArray[x + y * mapWidth].getCubeColor().Equals(Green())):
+                            cubeArray[x + y * mapWidth].isMovingUp = true;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 24 && n < 50) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Green()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = true;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 49 && n < 75) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Green()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = true;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 74 && n < 101) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Green()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = true;
+                            break;
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        case int n when (n < 25 && cubeArray[x + y * mapWidth].getCubeColor().Equals(Blue())):
+                            cubeArray[x + y * mapWidth].isMovingUp = true;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 24 && n < 50) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Blue()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = true;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 49 && n < 75) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Blue()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = true;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 74 && n < 101) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Blue()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = true;
+                            break;
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        case int n when (n < 25 && cubeArray[x + y * mapWidth].getCubeColor().Equals(Purple())):
+                            cubeArray[x + y * mapWidth].isMovingUp = true;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 24 && n < 50) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Purple()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = true;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 49 && n < 75) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Purple()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = true;
+                            cubeArray[x + y * mapWidth].isMovingRight = false;
+                            break;
+                        case int n when (n > 74 && n < 101) && cubeArray[x + y * mapWidth].getCubeColor().Equals(Purple()):
+                            cubeArray[x + y * mapWidth].isMovingUp = false;
+                            cubeArray[x + y * mapWidth].isMovingDown = false;
+                            cubeArray[x + y * mapWidth].isMovingLeft = false;
+                            cubeArray[x + y * mapWidth].isMovingRight = true;
+                            break;
+                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    }
 
-                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Blue())):
-                        cubeList[i].isMovingUp = true;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 24 && n < 50) && cubeList[i].getCubeColor().Equals(Blue()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = true;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 49 && n < 75) && cubeList[i].getCubeColor().Equals(Blue()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = true;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 74 && n < 101) && cubeList[i].getCubeColor().Equals(Blue()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = true;
-                        break;
-
-                    case int n when (n < 25 && cubeList[i].getCubeColor().Equals(Purple())):
-                        cubeList[i].isMovingUp = true;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 24 && n < 50) && cubeList[i].getCubeColor().Equals(Purple()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = true;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 49 && n < 75) && cubeList[i].getCubeColor().Equals(Purple()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = true;
-                        cubeList[i].isMovingRight = false;
-                        break;
-                    case int n when (n > 74 && n < 101) && cubeList[i].getCubeColor().Equals(Purple()):
-                        cubeList[i].isMovingUp = false;
-                        cubeList[i].isMovingDown = false;
-                        cubeList[i].isMovingLeft = false;
-                        cubeList[i].isMovingRight = true;
-                        break;
-                }
-
-                if (cubeList[i].isMovingUp && cubeList[i].getY() > 0)
-                {
-                    //cubeList[i].getX() and .getY() are the actual X and Y values
-                    //isOccupied size is based off of mapWidth, which is 70x70
-                    isOccupied[cubeList[i].getX() + cubeList[i].getY() * mapWidth] = false;
-                    cubeList[i].setY(cubeList[i].getY() - tileHeight);
-                    isOccupied[cubeList[i].getX() + cubeList[i].getY() * mapWidth] = true;
-                }
-                else if (cubeList[i].isMovingDown && cubeList[i].getY() + tileHeight < screenHeight)
-                {
-                    cubeList[i].setY(cubeList[i].getY() + tileHeight);
-                }
-                else if (cubeList[i].isMovingLeft && cubeList[i].getX() > 0)
-                {
-                    cubeList[i].setX(cubeList[i].getX() - tileWidth);
-                }
-                else if (cubeList[i].isMovingRight && cubeList[i].getX() + tileWidth < screenWidth)
-                {
-                    cubeList[i].setX(cubeList[i].getX() + tileWidth);
+                    if (cubeArray[x + y * mapWidth].isMovingUp && cubeArray[x + y * mapWidth].getY() > 0 && isOccupied[x + (y - 1) * mapWidth])
+                    {
+                        isOccupied[x + y * mapWidth] = false;
+                        cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() - tileHeight);
+                        isOccupied[x + y * mapWidth] = true;
+                    }
+                    else if (cubeArray[x + y * mapWidth].isMovingDown && cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
+                    {
+                        isOccupied[x + y * mapWidth] = false;
+                        cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() + tileHeight);
+                        isOccupied[x + y * mapWidth] = true;
+                    }
+                    else if (cubeArray[x + y * mapWidth].isMovingLeft && cubeArray[x + y * mapWidth].getX() > 0)
+                    {
+                        isOccupied[x + y * mapWidth] = false;
+                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() - tileWidth);
+                        isOccupied[x + y * mapWidth] = true;
+                    }
+                    else if (cubeArray[x + y * mapWidth].isMovingRight && cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth)
+                    {
+                        isOccupied[x + y * mapWidth] = false;
+                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() + tileWidth);
+                        isOccupied[x + y * mapWidth] = true;
+                    }
                 }
             }
         }
+        /*
         private void BreedingCubes()
         {
-            for(int i = 0; i < cubeList.Count; i++)
+            for(int y = 0; y < mapHeight; y++)
             {
                 for(int j = 0; j < cubeList.Count; j++)
                 {
@@ -420,5 +439,6 @@ namespace SuperSuperWeirdProject
                 }
             }
         }
+        */
     }
 }
