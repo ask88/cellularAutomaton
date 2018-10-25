@@ -117,7 +117,7 @@ namespace SuperSuperWeirdProject
         public void Update(GameTime gameTime)
         {
             ManipulateCube();
-            firstTime = gameTime.TotalGameTime.Seconds;
+            firstTime = (gameTime.TotalGameTime.Milliseconds * 300);
             if(firstTime!=lastTime)
             {
                 MoveCubes();
@@ -220,7 +220,7 @@ namespace SuperSuperWeirdProject
                         state.Position.X < mapArray[x + y * mapWidth].x + tileWidth &&
                         state.Position.Y > mapArray[x + y * mapWidth].y &&
                         state.Position.Y < mapArray[x + y * mapWidth].y + tileHeight &&
-                        state.LeftButton == ButtonState.Pressed)
+                        state.LeftButton == ButtonState.Pressed && !isOccupied[x + y * mapWidth])
                     {
                         if(kState.IsKeyDown(Keys.NumPad0))
                         {
@@ -260,7 +260,7 @@ namespace SuperSuperWeirdProject
                 {
                     int direction = rand.Next(0, 101);
 
-                    switch (20/*direction*/)
+                    switch (direction)
                     {
                         case int n when (n < 25 && cubeArray[x+y*mapWidth].getCubeColor().Equals(Black())):
                             cubeArray[x + y * mapWidth].isMovingUp = true;
@@ -389,29 +389,37 @@ namespace SuperSuperWeirdProject
                             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     }
 
-                    if (cubeArray[x + y * mapWidth].isMovingUp && cubeArray[x + y * mapWidth].getY() > 0 && isOccupied[x + (y - 1) * mapWidth])
+                    if (cubeArray[x + y * mapWidth].isMovingUp && cubeArray[x + y * mapWidth].getY() > 0 && !isOccupied[x + (y - 1) * mapWidth])
                     {
-                        isOccupied[x + y * mapWidth] = false;
                         cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() - tileHeight);
-                        isOccupied[x + y * mapWidth] = true;
-                    }
-                    else if (cubeArray[x + y * mapWidth].isMovingDown && cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
-                    {
+                        cubeArray[x + (y - 1) * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
                         isOccupied[x + y * mapWidth] = false;
+                        isOccupied[x + (y - 1) * mapWidth] = true;
+                    }
+                    else if (cubeArray[x + y * mapWidth].isMovingDown && cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight && !isOccupied[x + (y + 1) * mapWidth])
+                    {
                         cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() + tileHeight);
-                        isOccupied[x + y * mapWidth] = true;
-                    }
-                    else if (cubeArray[x + y * mapWidth].isMovingLeft && cubeArray[x + y * mapWidth].getX() > 0)
-                    {
+                        cubeArray[x + (y + 1) * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
                         isOccupied[x + y * mapWidth] = false;
-                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() - tileWidth);
-                        isOccupied[x + y * mapWidth] = true;
+                        isOccupied[x + (y + 1) * mapWidth] = true;
                     }
-                    else if (cubeArray[x + y * mapWidth].isMovingRight && cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth)
+                    else if (cubeArray[x + y * mapWidth].isMovingLeft && cubeArray[x + y * mapWidth].getX() > 0 && !isOccupied[(x - 1)+ y * mapWidth])
                     {
+                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() - tileHeight);
+                        cubeArray[(x - 1) + y * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
                         isOccupied[x + y * mapWidth] = false;
-                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() + tileWidth);
-                        isOccupied[x + y * mapWidth] = true;
+                        isOccupied[(x - 1) + y * mapWidth] = true;
+                    }
+                    else if (cubeArray[x + y * mapWidth].isMovingRight && cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth && !isOccupied[(x + 1) + y * mapWidth])
+                    {
+                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() + tileHeight);
+                        cubeArray[(x + 1) + y * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
+                        isOccupied[x + y * mapWidth] = false;
+                        isOccupied[(x + 1) + y * mapWidth] = true;
                     }
                 }
             }
