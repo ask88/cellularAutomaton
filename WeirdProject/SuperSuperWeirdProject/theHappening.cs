@@ -69,6 +69,7 @@ namespace SuperSuperWeirdProject
         private mapData[] mapArray;
         private bool[] isOccupied;
 
+        private int breedCounter = 0;
         public theHappening(Game1 g, int screenWidth, int screenHeight)
         {
             this.g = g;
@@ -115,7 +116,12 @@ namespace SuperSuperWeirdProject
             if(firstTime!=lastTime)
             {
                 MoveCubes();
-                //BreedingCubes();
+                if (breedCounter == 20)
+                {
+                    BreedingCubes();
+                    breedCounter = 0;
+                }
+                breedCounter++;
                 lastTime = firstTime;
             }
         }
@@ -324,9 +330,9 @@ namespace SuperSuperWeirdProject
                                 cubeArray[x + y * mapWidth].getY() > 0 &&
                                 cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
                     {
-                        if (isOccupied[(x - 1) + y * mapWidth])
+                        if (!isOccupied[(x - 1) + y * mapWidth])
                         {
-                            cubeArray[x + y * mapWidth] = new theCube(g, Black(), tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y);
+                            cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[x + y * mapWidth].y);
                             isOccupied[(x + 1) + y * mapWidth] = true;
                         }
                         else if(isOccupied[(x + 1) + y * mapWidth] &&
