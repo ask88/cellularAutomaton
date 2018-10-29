@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 
 namespace SuperSuperWeirdProject
 {
@@ -68,13 +67,13 @@ namespace SuperSuperWeirdProject
         private theCube[] cubeArray;
         private mapData[] mapArray;
         private bool[] isOccupied;
+        private int broodCounter;
 
-        private int breedCounter = 0;
         public theHappening(Game1 g, int screenWidth, int screenHeight)
         {
             this.g = g;
-            tileWidth = 10;
-            tileHeight = 10;
+            tileWidth = 5;
+            tileHeight = 5;
 
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
@@ -113,15 +112,16 @@ namespace SuperSuperWeirdProject
         {
             ManipulateCube();
             firstTime = (gameTime.TotalGameTime.Milliseconds);
-            if(firstTime!=lastTime)
+            if (firstTime != lastTime)
             {
                 MoveCubes();
-                if (breedCounter == 20)
+                if (broodCounter == 100)
                 {
                     BreedingCubes();
-                    breedCounter = 0;
+                    broodCounter = 0;
                 }
-                breedCounter++;
+                broodCounter++;
+                EatCubes();
                 lastTime = firstTime;
             }
         }
@@ -205,6 +205,7 @@ namespace SuperSuperWeirdProject
 
             return new Color(r, g, b, a);
         }
+
         private void ManipulateCube()
         {
             MouseState state = Mouse.GetState();
@@ -314,17 +315,13 @@ namespace SuperSuperWeirdProject
                 }
             }
         }
-        private void AttractToCube()
-        {
-
-        }
         private void BreedingCubes()
         {
-            for(int y = 0; y < mapHeight; y++)
+            for (int y = 0; y < mapHeight; y++)
             {
-                for(int x = 0; x < mapWidth; x++)
+                for (int x = 0; x < mapWidth; x++)
                 {
-                    if(cubeArray[x + y * mapWidth].getTexture() != null &&
+                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
                                 cubeArray[x + y * mapWidth].getX() > 0 &&
                                 cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
                                 cubeArray[x + y * mapWidth].getY() > 0 &&
@@ -332,30 +329,43 @@ namespace SuperSuperWeirdProject
                     {
                         if (!isOccupied[(x - 1) + y * mapWidth])
                         {
-                            cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[x + y * mapWidth].y);
+                            cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[(x + 1) + y * mapWidth].y);
                             isOccupied[(x + 1) + y * mapWidth] = true;
-                        }
-                        else if(isOccupied[(x + 1) + y * mapWidth] &&
-                            cubeArray[x + y * mapWidth].getCubeColor().Equals(cubeArray[(x + 1) + y * mapWidth]))
-                        {
-                            cubeArray[x + y * mapWidth] = new theCube(g, Black(), tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y);
-                            isOccupied[x + y * mapWidth] = true;
-                        }
-                        else if(isOccupied[x + (y - 1) * mapWidth] &&
-                            cubeArray[x + y * mapWidth].getCubeColor().Equals(cubeArray[x + (y - 1) * mapWidth]))
-                        {
-                            cubeArray[x + y * mapWidth] = new theCube(g, Black(), tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y);
-                            isOccupied[x + y * mapWidth] = true;
-                        }
-                        else if(isOccupied[x + (y + 1) * mapWidth] &&
-                            cubeArray[x + y * mapWidth].getCubeColor().Equals(cubeArray[x + (y + 1) * mapWidth]))
-                        {
-                            cubeArray[x + y * mapWidth] = new theCube(g, Black(), tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y);
-                            isOccupied[x + y * mapWidth] = true;
                         }
                     }
                 }
             }
+        }
+        private void EatCubes()
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                                cubeArray[x + y * mapWidth].getX() > 0 &&
+                                cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
+                                cubeArray[x + y * mapWidth].getY() > 0 &&
+                                cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
+                    {
+                        if(isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().R != cubeArray[(x - 1) + y * mapWidth].getCubeColor().R)
+                        {
+                            cubeArray[(x - 1) + y * mapWidth] = new theCube();
+                            isOccupied[(x - 1) + y * mapWidth] = false;
+                        }
+                        if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().G != cubeArray[(x - 1) + y * mapWidth].getCubeColor().G)
+                        {
+                            cubeArray[(x - 1) + y * mapWidth] = new theCube();
+                            isOccupied[(x - 1) + y * mapWidth] = false;
+                        }
+                        if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().B != cubeArray[(x - 1) + y * mapWidth].getCubeColor().B)
+                        {
+                            cubeArray[(x - 1) + y * mapWidth] = new theCube();
+                            isOccupied[(x - 1) + y * mapWidth] = false;
+                        }
+                    }
+                }
+            }   
         }
     }
 }
