@@ -15,6 +15,8 @@ namespace SuperSuperWeirdProject
         private Game1 g;
         private int x, y, width, height;
         public int livingCycle { get; set; }
+        public int breedingCycle { get; set; }
+        public int hungerCycle { get; set; }
         public bool isHungry { get; set; }
         private Color color;
         private Texture2D texture;
@@ -31,8 +33,10 @@ namespace SuperSuperWeirdProject
             this.height = height;
             this.x = x;
             this.y = y;
-            livingCycle = 0;
             this.color = color;
+            livingCycle = 0;
+            breedingCycle = 0;
+            hungerCycle = 0;
             cubeTexture();
         }
 
@@ -62,8 +66,9 @@ namespace SuperSuperWeirdProject
 
     class theHappening
     {
-        private const int DEATH_RATE = 100;
-        private const int BIRTH_RATE = 100;
+        private const int DEATH_RATE = 1000; //bigger number == living longer
+        private const int BIRTH_RATE = 50; //lower number == breeding faster
+        private const int HUNGER_RATE = 10;
 
         private Game1 g;
         private int screenWidth, screenHeight;
@@ -76,7 +81,10 @@ namespace SuperSuperWeirdProject
         private theCube[] cubeArray;
         private mapData[] mapArray;
         private bool[] isOccupied;
+
         private int broodCounter;
+        private int hungerCounter;
+        private int livingCounter;
 
         public theHappening(Game1 g, int screenWidth, int screenHeight)
         {
