@@ -14,6 +14,8 @@ namespace SuperSuperWeirdProject
     {
         private Game1 g;
         private int x, y, width, height;
+        public int livingCycle { get; set; }
+        public bool isHungry { get; set; }
         private Color color;
         private Texture2D texture;
 
@@ -29,6 +31,7 @@ namespace SuperSuperWeirdProject
             this.height = height;
             this.x = x;
             this.y = y;
+            livingCycle = 0;
             this.color = color;
             cubeTexture();
         }
@@ -49,9 +52,12 @@ namespace SuperSuperWeirdProject
         public Texture2D getTexture() { return texture; }
         public int getX() { return x; }
         public int getY() { return y; }
+        public int getLivingCycle() { return livingCycle; }
         public Color getCubeColor() { return color; }
+
         public void setX(int x) { this.x = x; }
         public void setY(int y) { this.y = y; }
+        public void setLivingCycle(int livingCycle) { this.livingCycle = livingCycle; }
     }
 
     class theHappening
@@ -95,6 +101,7 @@ namespace SuperSuperWeirdProject
 
                     cubeArray[x + y * mapWidth] = new theCube();
                     isOccupied[x + y * mapWidth] = false;
+                    cubeArray[x + y * mapWidth].isHungry = true;
                 }
             }
         }
@@ -115,13 +122,9 @@ namespace SuperSuperWeirdProject
             if (firstTime != lastTime)
             {
                 MoveCubes();
-                if (broodCounter == 100)
-                {
-                    BreedingCubes();
-                    broodCounter = 0;
-                }
-                broodCounter++;
+                BreedingCubes();
                 EatCubes();
+                Death();
                 lastTime = firstTime;
             }
         }
@@ -240,6 +243,7 @@ namespace SuperSuperWeirdProject
                             selectedColor = Blue();
                         }
                         cubeArray[x + y * mapWidth] = new theCube(g, selectedColor, tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y);
+                        cubeArray[x + y * mapWidth].isHungry = true;
                         isOccupied[x + y * mapWidth] = true;
                     }
                     if (state.Position.X > mapArray[x + y * mapWidth].x &&
@@ -317,29 +321,39 @@ namespace SuperSuperWeirdProject
         }
         private void BreedingCubes()
         {
-            for (int y = 0; y < mapHeight; y++)
+            if (broodCounter == 100)
             {
-                for (int x = 0; x < mapWidth; x++)
+                for (int y = 0; y < mapHeight; y++)
                 {
-                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
-                                cubeArray[x + y * mapWidth].getX() > 0 &&
-                                cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
-                                cubeArray[x + y * mapWidth].getY() > 0 &&
-                                cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
+                    for (int x = 0; x < mapWidth; x++)
                     {
-                        if (!isOccupied[(x - 1) + y * mapWidth])
+                        if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                            cubeArray[x + y * mapWidth].isHungry == false &&
+                            cubeArray[x + y * mapWidth].getX() > 0 &&
+                            cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
+                            cubeArray[x + y * mapWidth].getY() > 0 &&
+                            cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
                         {
-                            cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[(x + 1) + y * mapWidth].y);
-                            isOccupied[(x + 1) + y * mapWidth] = true;
+                            if (!isOccupied[(x - 1) + y * mapWidth])
+                            {
+                                cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[(x + 1) + y * mapWidth].y);
+                                isOccupied[(x + 1) + y * mapWidth] = true;
+                                cubeArray[(x + 1) + y * mapWidth].isHungry = true;
+                            }
                         }
                     }
                 }
+                broodCounter = 0;
+            }
+            else
+            {
+                broodCounter++;
             }
         }
         private void EatCubes()
         {
             for (int y = 0; y < mapHeight; y++)
-            {
+            {  
                 for (int x = 0; x < mapWidth; x++)
                 {
                     if (cubeArray[x + y * mapWidth].getTexture() != null &&
@@ -350,22 +364,54 @@ namespace SuperSuperWeirdProject
                     {
                         if(isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().R != cubeArray[(x - 1) + y * mapWidth].getCubeColor().R)
                         {
+                            Console.WriteLine("EAT");
+                            cubeArray[x + y * mapWidth].isHungry = false;
                             cubeArray[(x - 1) + y * mapWidth] = new theCube();
                             isOccupied[(x - 1) + y * mapWidth] = false;
                         }
+
                         if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().G != cubeArray[(x - 1) + y * mapWidth].getCubeColor().G)
                         {
+                            Console.WriteLine("EAT");
+                            cubeArray[x + y * mapWidth].isHungry = false;
                             cubeArray[(x - 1) + y * mapWidth] = new theCube();
                             isOccupied[(x - 1) + y * mapWidth] = false;
                         }
+
                         if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().B != cubeArray[(x - 1) + y * mapWidth].getCubeColor().B)
                         {
+                            Console.WriteLine("EAT");
+                            cubeArray[x + y * mapWidth].isHungry = false;
                             cubeArray[(x - 1) + y * mapWidth] = new theCube();
                             isOccupied[(x - 1) + y * mapWidth] = false;
                         }
                     }
+                    else
+                    {
+                        cubeArray[x + y * mapWidth].isHungry = true;
+                    }
                 }
             }   
+        }
+        private void Death()
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    if (cubeArray[x + y * mapWidth].livingCycle > 100 && cubeArray[x + y * mapWidth].isHungry == true)
+                    {
+                        cubeArray[x + y * mapWidth] = new theCube();
+                        cubeArray[x + y * mapWidth].isHungry = false;
+                        cubeArray[x + y * mapWidth].livingCycle = 0;
+                        isOccupied[x + y * mapWidth] = false;
+                    }
+                    else
+                    {
+                        cubeArray[x + y * mapWidth].livingCycle++;
+                    }
+                }
+            }
         }
     }
 }
