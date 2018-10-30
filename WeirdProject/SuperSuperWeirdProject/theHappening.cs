@@ -62,6 +62,9 @@ namespace SuperSuperWeirdProject
 
     class theHappening
     {
+        private const int DEATH_RATE = 100;
+        private const int BIRTH_RATE = 100;
+
         private Game1 g;
         private int screenWidth, screenHeight;
         private int mapWidth, mapHeight;
@@ -321,7 +324,7 @@ namespace SuperSuperWeirdProject
         }
         private void BreedingCubes()
         {
-            if (broodCounter == 100)
+            if (broodCounter == BIRTH_RATE)
             {
                 for (int y = 0; y < mapHeight; y++)
                 {
@@ -364,31 +367,37 @@ namespace SuperSuperWeirdProject
                     {
                         if(isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().R != cubeArray[(x - 1) + y * mapWidth].getCubeColor().R)
                         {
-                            Console.WriteLine("EAT");
                             cubeArray[x + y * mapWidth].isHungry = false;
                             cubeArray[(x - 1) + y * mapWidth] = new theCube();
                             isOccupied[(x - 1) + y * mapWidth] = false;
+                        }
+                        else
+                        {
+                            cubeArray[x + y * mapWidth].isHungry = true;
                         }
 
                         if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().G != cubeArray[(x - 1) + y * mapWidth].getCubeColor().G)
                         {
-                            Console.WriteLine("EAT");
                             cubeArray[x + y * mapWidth].isHungry = false;
                             cubeArray[(x - 1) + y * mapWidth] = new theCube();
                             isOccupied[(x - 1) + y * mapWidth] = false;
+                        }
+                        else
+                        {
+                            cubeArray[x + y * mapWidth].isHungry = true;
                         }
 
                         if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().B != cubeArray[(x - 1) + y * mapWidth].getCubeColor().B)
                         {
-                            Console.WriteLine("EAT");
                             cubeArray[x + y * mapWidth].isHungry = false;
                             cubeArray[(x - 1) + y * mapWidth] = new theCube();
                             isOccupied[(x - 1) + y * mapWidth] = false;
                         }
-                    }
-                    else
-                    {
-                        cubeArray[x + y * mapWidth].isHungry = true;
+                        else
+                        {
+                            cubeArray[x + y * mapWidth].isHungry = true;
+                        }
+
                     }
                 }
             }   
@@ -399,7 +408,7 @@ namespace SuperSuperWeirdProject
             {
                 for (int x = 0; x < mapWidth; x++)
                 {
-                    if (cubeArray[x + y * mapWidth].livingCycle > 100 && cubeArray[x + y * mapWidth].isHungry == true)
+                    if (cubeArray[x + y * mapWidth].livingCycle > DEATH_RATE && cubeArray[x + y * mapWidth].isHungry == true)
                     {
                         cubeArray[x + y * mapWidth] = new theCube();
                         cubeArray[x + y * mapWidth].isHungry = false;
