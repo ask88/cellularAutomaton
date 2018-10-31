@@ -34,6 +34,7 @@ namespace SuperSuperWeirdProject
             this.x = x;
             this.y = y;
             this.color = color;
+            isHungry = true;
             livingCycle = 0;
             breedingCycle = 0;
             hungerCycle = 0;
@@ -66,7 +67,7 @@ namespace SuperSuperWeirdProject
 
     class theHappening
     {
-        private const int DEATH_RATE = 1000; //bigger number == living longer
+        private const int DEATH_RATE = 10; //bigger number == living longer
         private const int BIRTH_RATE = 50; //lower number == breeding faster
         private const int HUNGER_RATE = 10;
 
@@ -81,10 +82,6 @@ namespace SuperSuperWeirdProject
         private theCube[] cubeArray;
         private mapData[] mapArray;
         private bool[] isOccupied;
-
-        private int broodCounter;
-        private int hungerCounter;
-        private int livingCounter;
 
         public theHappening(Game1 g, int screenWidth, int screenHeight)
         {
@@ -129,14 +126,16 @@ namespace SuperSuperWeirdProject
         public void Update(GameTime gameTime)
         {
             ManipulateCube();
-            firstTime = (gameTime.TotalGameTime.Milliseconds);
-            if (firstTime != lastTime)
+
+            for (int y = 0; y < mapHeight; y++)
             {
-                MoveCubes();
-                BreedingCubes();
-                EatCubes();
-                Death();
-                lastTime = firstTime;
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    MoveCubes(x, y);
+                    BreedingCubes(x, y);
+                    EatCubes(x, y);
+                    Death(x, y);
+                }
             }
         }
 
@@ -147,7 +146,8 @@ namespace SuperSuperWeirdProject
             {
                 for (int x = 0; x < mapWidth; x++)
                 {
-                    if ((cubeArray[x + y * mapWidth].getTexture() != null))
+                    //implement a try catch for the null objects
+                    if ((!cubeArray[x + y * mapWidth].Equals(null)))
                     {
                         spriteBatch.Draw(cubeArray[x + y * mapWidth].getTexture(), new Vector2(cubeArray[x + y * mapWidth].getX(), cubeArray[x + y * mapWidth].getY()), Color.White);
                     }
@@ -268,166 +268,126 @@ namespace SuperSuperWeirdProject
                 }
             }
         }
-        private void MoveCubes()
+        private void MoveCubes(int x, int y)
         {
-            for (int y = 0; y < mapHeight; y++)
-            {
-                for (int x = 0; x < mapWidth; x++)
-                {
-                    int direction = rand.Next(1, 5);
+            int direction = rand.Next(1, 5);
 
-                    switch (direction)
+            switch (direction)
+            {
+                case 1:
+                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                        cubeArray[x + y * mapWidth].getX() > 0 &&
+                        !isOccupied[(x - 1) + y * mapWidth])
                     {
-                        case 1:
-                            if (cubeArray[x + y * mapWidth].getTexture() != null &&
-                                cubeArray[x + y * mapWidth].getX() > 0 &&
-                                !isOccupied[(x - 1) + y * mapWidth])
-                            {
-                                cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() - tileWidth);
-                                cubeArray[(x - 1) + y * mapWidth] = cubeArray[x + y * mapWidth];
-                                cubeArray[x + y * mapWidth] = new theCube();
-                                isOccupied[x + y * mapWidth] = false;
-                                isOccupied[(x - 1) + y * mapWidth] = true;
-                            }
-                            break;
-                        case 2:
-                            if (cubeArray[x + y * mapWidth].getTexture() != null &&
-                                cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
-                                !isOccupied[(x + 1) + y * mapWidth])
-                            {
-                                cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() + tileWidth);
-                                cubeArray[(x + 1) + y * mapWidth] = cubeArray[x + y * mapWidth];
-                                cubeArray[x + y * mapWidth] = new theCube();
-                                isOccupied[x + y * mapWidth] = false;
-                                isOccupied[(x + 1) + y * mapWidth] = true;
-                            }
-                            break;
-                        case 3:
-                            if (cubeArray[x + y * mapWidth].getTexture() != null &&
-                                cubeArray[x + y * mapWidth].getY() > 0 &&
-                                !isOccupied[x + (y - 1) * mapWidth])
-                            {
-                                cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() - tileHeight);
-                                cubeArray[x + (y - 1) * mapWidth] = cubeArray[x + y * mapWidth];
-                                cubeArray[x + y * mapWidth] = new theCube();
-                                isOccupied[x + y * mapWidth] = false;
-                                isOccupied[x + (y - 1) * mapWidth] = true;
-                            }
-                            break;
-                        case 4:
-                            if (cubeArray[x + y * mapWidth].getTexture() != null &&
-                                cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight &&
-                                !isOccupied[x + (y + 1) * mapWidth])
-                            {
-                                cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() + tileHeight);
-                                cubeArray[x + (y + 1) * mapWidth] = cubeArray[x + y * mapWidth];
-                                cubeArray[x + y * mapWidth] = new theCube();
-                                isOccupied[x + y * mapWidth] = false;
-                                isOccupied[x + (y + 1) * mapWidth] = true;
-                            }
-                            break;
+                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() - tileWidth);
+                        cubeArray[(x - 1) + y * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
+                        isOccupied[x + y * mapWidth] = false;
+                        isOccupied[(x - 1) + y * mapWidth] = true;
                     }
+                    break;
+                case 2:
+                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                        cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
+                        !isOccupied[(x + 1) + y * mapWidth])
+                    {
+                        cubeArray[x + y * mapWidth].setX(cubeArray[x + y * mapWidth].getX() + tileWidth);
+                        cubeArray[(x + 1) + y * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
+                        isOccupied[x + y * mapWidth] = false;
+                        isOccupied[(x + 1) + y * mapWidth] = true;
+                    }
+                    break;
+                case 3:
+                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                        cubeArray[x + y * mapWidth].getY() > 0 &&
+                        !isOccupied[x + (y - 1) * mapWidth])
+                    {
+                        cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() - tileHeight);
+                        cubeArray[x + (y - 1) * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
+                        isOccupied[x + y * mapWidth] = false;
+                        isOccupied[x + (y - 1) * mapWidth] = true;
+                    }
+                    break;
+                case 4:
+                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                        cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight &&
+                        !isOccupied[x + (y + 1) * mapWidth])
+                    {
+                        cubeArray[x + y * mapWidth].setY(cubeArray[x + y * mapWidth].getY() + tileHeight);
+                        cubeArray[x + (y + 1) * mapWidth] = cubeArray[x + y * mapWidth];
+                        cubeArray[x + y * mapWidth] = new theCube();
+                        isOccupied[x + y * mapWidth] = false;
+                        isOccupied[x + (y + 1) * mapWidth] = true;
+                    }
+                    break;
+            }
+        }
+        private void BreedingCubes(int x, int y)
+        {
+            if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                        cubeArray[x + y * mapWidth].isHungry == false &&
+                        cubeArray[x + y * mapWidth].getX() > 0 &&
+                        cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
+                        cubeArray[x + y * mapWidth].getY() > 0 &&
+                        cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
+            {
+                if (!isOccupied[(x - 1) + y * mapWidth])
+                {
+                    cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[(x + 1) + y * mapWidth].y);
+                    isOccupied[(x + 1) + y * mapWidth] = true;
+                    cubeArray[(x + 1) + y * mapWidth].isHungry = true;
                 }
             }
         }
-        private void BreedingCubes()
+
+        private void EatCubes(int x, int y)
         {
-            if (broodCounter == BIRTH_RATE)
+            if (cubeArray[x + y * mapWidth].getTexture() != null &&
+                               cubeArray[x + y * mapWidth].isHungry &&
+                               cubeArray[x + y * mapWidth].getX() > 0 &&
+                               cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
+                               cubeArray[x + y * mapWidth].getY() > 0 &&
+                               cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
             {
-                for (int y = 0; y < mapHeight; y++)
+                if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().R != cubeArray[(x - 1) + y * mapWidth].getCubeColor().R)
                 {
-                    for (int x = 0; x < mapWidth; x++)
-                    {
-                        if (cubeArray[x + y * mapWidth].getTexture() != null &&
-                            cubeArray[x + y * mapWidth].isHungry == false &&
-                            cubeArray[x + y * mapWidth].getX() > 0 &&
-                            cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
-                            cubeArray[x + y * mapWidth].getY() > 0 &&
-                            cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
-                        {
-                            if (!isOccupied[(x - 1) + y * mapWidth])
-                            {
-                                cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[(x + 1) + y * mapWidth].y);
-                                isOccupied[(x + 1) + y * mapWidth] = true;
-                                cubeArray[(x + 1) + y * mapWidth].isHungry = true;
-                            }
-                        }
-                    }
+                    cubeArray[x + y * mapWidth].isHungry = false;
+                    cubeArray[(x - 1) + y * mapWidth] = new theCube();
+                    isOccupied[(x - 1) + y * mapWidth] = false;
                 }
-                broodCounter = 0;
+
+                if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().G != cubeArray[(x - 1) + y * mapWidth].getCubeColor().G)
+                {
+                    cubeArray[x + y * mapWidth].isHungry = false;
+                    cubeArray[(x - 1) + y * mapWidth] = null;
+                    isOccupied[(x - 1) + y * mapWidth] = false;
+                }
+
+                if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().B != cubeArray[(x - 1) + y * mapWidth].getCubeColor().B)
+                {
+                    cubeArray[x + y * mapWidth].isHungry = false;
+                    cubeArray[(x - 1) + y * mapWidth] = null;
+                    isOccupied[(x - 1) + y * mapWidth] = false;
+                }
+            }
+        }
+
+        private void Death(int x, int y)
+        {
+            if (cubeArray[x + y * mapWidth].livingCycle > DEATH_RATE && cubeArray[x + y * mapWidth].isHungry == true)
+            {
+                cubeArray[x + y * mapWidth] = null;
+                /*
+                cubeArray[x + y * mapWidth].isHungry = false;
+                cubeArray[x + y * mapWidth].livingCycle = 0;
+                isOccupied[x + y * mapWidth] = false;
+                */
             }
             else
             {
-                broodCounter++;
-            }
-        }
-        private void EatCubes()
-        {
-            for (int y = 0; y < mapHeight; y++)
-            {  
-                for (int x = 0; x < mapWidth; x++)
-                {
-                    if (cubeArray[x + y * mapWidth].getTexture() != null &&
-                                cubeArray[x + y * mapWidth].getX() > 0 &&
-                                cubeArray[x + y * mapWidth].getX() + tileWidth < screenWidth &&
-                                cubeArray[x + y * mapWidth].getY() > 0 &&
-                                cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
-                    {
-                        if(isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().R != cubeArray[(x - 1) + y * mapWidth].getCubeColor().R)
-                        {
-                            cubeArray[x + y * mapWidth].isHungry = false;
-                            cubeArray[(x - 1) + y * mapWidth] = new theCube();
-                            isOccupied[(x - 1) + y * mapWidth] = false;
-                        }
-                        else
-                        {
-                            cubeArray[x + y * mapWidth].isHungry = true;
-                        }
-
-                        if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().G != cubeArray[(x - 1) + y * mapWidth].getCubeColor().G)
-                        {
-                            cubeArray[x + y * mapWidth].isHungry = false;
-                            cubeArray[(x - 1) + y * mapWidth] = new theCube();
-                            isOccupied[(x - 1) + y * mapWidth] = false;
-                        }
-                        else
-                        {
-                            cubeArray[x + y * mapWidth].isHungry = true;
-                        }
-
-                        if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().B != cubeArray[(x - 1) + y * mapWidth].getCubeColor().B)
-                        {
-                            cubeArray[x + y * mapWidth].isHungry = false;
-                            cubeArray[(x - 1) + y * mapWidth] = new theCube();
-                            isOccupied[(x - 1) + y * mapWidth] = false;
-                        }
-                        else
-                        {
-                            cubeArray[x + y * mapWidth].isHungry = true;
-                        }
-
-                    }
-                }
-            }   
-        }
-        private void Death()
-        {
-            for (int y = 0; y < mapHeight; y++)
-            {
-                for (int x = 0; x < mapWidth; x++)
-                {
-                    if (cubeArray[x + y * mapWidth].livingCycle > DEATH_RATE && cubeArray[x + y * mapWidth].isHungry == true)
-                    {
-                        cubeArray[x + y * mapWidth] = new theCube();
-                        cubeArray[x + y * mapWidth].isHungry = false;
-                        cubeArray[x + y * mapWidth].livingCycle = 0;
-                        isOccupied[x + y * mapWidth] = false;
-                    }
-                    else
-                    {
-                        cubeArray[x + y * mapWidth].livingCycle++;
-                    }
-                }
+                cubeArray[x + y * mapWidth].livingCycle++;
             }
         }
     }
