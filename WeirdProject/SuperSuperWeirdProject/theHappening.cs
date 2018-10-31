@@ -107,9 +107,8 @@ namespace SuperSuperWeirdProject
                     mapArray[x + y * mapWidth].x = (tileWidth * x);
                     mapArray[x + y * mapWidth].y = (tileHeight * y);
 
-                    cubeArray[x + y * mapWidth] = null;
+                    cubeArray[x + y * mapWidth] = new theCube();
                     isOccupied[x + y * mapWidth] = false;
-                    cubeArray[x + y * mapWidth].isHungry = true;
                 }
             }
         }
@@ -126,17 +125,23 @@ namespace SuperSuperWeirdProject
         public void Update(GameTime gameTime)
         {
             ManipulateCube();
+            firstTime = gameTime.TotalGameTime.Milliseconds * 200;
 
-            for (int y = 0; y < mapHeight; y++)
-            {
-                for (int x = 0; x < mapWidth; x++)
+                for (int y = 0; y < mapHeight; y++)
                 {
-                    MoveCubes(x, y);
-                    BreedingCubes(x, y);
-                    EatCubes(x, y);
-                    Death(x, y);
+                    for (int x = 0; x < mapWidth; x++)
+                    {
+                        if (firstTime != lastTime)
+                        {
+                            MoveCubes(x, y);
+                            BreedingCubes(x, y);
+                            EatCubes(x, y);
+                            Death(x, y);
+                        }
+                    }
                 }
-            }
+
+            lastTime = firstTime;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -147,7 +152,7 @@ namespace SuperSuperWeirdProject
                 for (int x = 0; x < mapWidth; x++)
                 {
                     //implement a try catch for the null objects
-                    if (!(cubeArray[x + y * mapWidth].Equals(null)))
+                    if (cubeArray[x + y * mapWidth].getTexture() != null)
                     {
                         spriteBatch.Draw(cubeArray[x + y * mapWidth].getTexture(), new Vector2(cubeArray[x + y * mapWidth].getX(), cubeArray[x + y * mapWidth].getY()), Color.White);
                     }
@@ -351,6 +356,7 @@ namespace SuperSuperWeirdProject
                                cubeArray[x + y * mapWidth].getY() > 0 &&
                                cubeArray[x + y * mapWidth].getY() + tileHeight < screenHeight)
             {
+                //red
                 if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().R != cubeArray[(x - 1) + y * mapWidth].getCubeColor().R)
                 {
                     cubeArray[x + y * mapWidth].isHungry = false;
@@ -358,6 +364,7 @@ namespace SuperSuperWeirdProject
                     isOccupied[(x - 1) + y * mapWidth] = false;
                 }
 
+                //green
                 if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().G != cubeArray[(x - 1) + y * mapWidth].getCubeColor().G)
                 {
                     cubeArray[x + y * mapWidth].isHungry = false;
@@ -365,6 +372,7 @@ namespace SuperSuperWeirdProject
                     isOccupied[(x - 1) + y * mapWidth] = false;
                 }
 
+                //blue
                 if (isOccupied[(x - 1) + y * mapWidth] && cubeArray[x + y * mapWidth].getCubeColor().B != cubeArray[(x - 1) + y * mapWidth].getCubeColor().B)
                 {
                     cubeArray[x + y * mapWidth].isHungry = false;
@@ -378,12 +386,10 @@ namespace SuperSuperWeirdProject
         {
             if (cubeArray[x + y * mapWidth].livingCycle > DEATH_RATE && cubeArray[x + y * mapWidth].isHungry == true)
             {
-                cubeArray[x + y * mapWidth] = null;
-                /*
+                cubeArray[x + y * mapWidth] = new theCube();
                 cubeArray[x + y * mapWidth].isHungry = false;
                 cubeArray[x + y * mapWidth].livingCycle = 0;
                 isOccupied[x + y * mapWidth] = false;
-                */
             }
             else
             {
