@@ -107,7 +107,7 @@ namespace SuperSuperWeirdProject
                     mapArray[x + y * mapWidth].x = (tileWidth * x);
                     mapArray[x + y * mapWidth].y = (tileHeight * y);
 
-                    cubeArray[x + y * mapWidth] = new theCube();
+                    cubeArray[x + y * mapWidth] = null;
                     isOccupied[x + y * mapWidth] = false;
                     cubeArray[x + y * mapWidth].isHungry = true;
                 }
@@ -147,7 +147,7 @@ namespace SuperSuperWeirdProject
                 for (int x = 0; x < mapWidth; x++)
                 {
                     //implement a try catch for the null objects
-                    if ((!cubeArray[x + y * mapWidth].Equals(null)))
+                    if (!(cubeArray[x + y * mapWidth].Equals(null)))
                     {
                         spriteBatch.Draw(cubeArray[x + y * mapWidth].getTexture(), new Vector2(cubeArray[x + y * mapWidth].getX(), cubeArray[x + y * mapWidth].getY()), Color.White);
                     }
