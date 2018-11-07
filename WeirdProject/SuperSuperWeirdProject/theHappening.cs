@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace SuperSuperWeirdProject
 {
@@ -26,7 +27,7 @@ namespace SuperSuperWeirdProject
 
         }
 
-        public theCube(Game1 g, Color color, int width, int height, int x, int y)
+        public theCube(Game1 g, Color color, int width, int height, int x, int y, bool hunger)
         {
             this.g = g;
             this.width = width;
@@ -34,7 +35,7 @@ namespace SuperSuperWeirdProject
             this.x = x;
             this.y = y;
             this.color = color;
-            isHungry = true;
+            isHungry = hunger;
             livingCycle = 0;
             breedingCycle = 0;
             hungerCycle = 0;
@@ -80,6 +81,7 @@ namespace SuperSuperWeirdProject
         private Random rand = new Random();
 
         private theCube[] cubeArray;
+        private List<theCube> cubeList;
         private mapData[] mapArray;
         private bool[] isOccupied;
 
@@ -254,12 +256,12 @@ namespace SuperSuperWeirdProject
                         {
                             selectedColor = Green();
                         }
-                        if(kState.IsKeyDown(Keys.NumPad3))
+                        if (kState.IsKeyDown(Keys.NumPad3))
                         {
                             selectedColor = Blue();
                         }
-                        cubeArray[x + y * mapWidth] = new theCube(g, selectedColor, tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y);
-                        cubeArray[x + y * mapWidth].isHungry = true;
+
+                        cubeList.Add(new theCube(g, selectedColor, tileWidth, tileHeight, mapArray[x + y * mapWidth].x, mapArray[x + y * mapWidth].y, true));
                         isOccupied[x + y * mapWidth] = true;
                     }
                     if (state.Position.X > mapArray[x + y * mapWidth].x &&
@@ -340,9 +342,7 @@ namespace SuperSuperWeirdProject
             {
                 if (!isOccupied[(x - 1) + y * mapWidth])
                 {
-                    cubeArray[(x + 1) + y * mapWidth] = new theCube(g, cubeArray[x + y * mapWidth].getCubeColor(), tileWidth, tileHeight, mapArray[(x + 1) + y * mapWidth].x, mapArray[(x + 1) + y * mapWidth].y);
-                    isOccupied[(x + 1) + y * mapWidth] = true;
-                    cubeArray[(x + 1) + y * mapWidth].isHungry = true;
+
                 }
             }
         }
